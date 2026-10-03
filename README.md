@@ -26,7 +26,41 @@
 
 ## Установка
 
-Готовой подписанной сборки нет, приложение собирается из исходников за минуту. Нужен Xcode или Command Line Tools (`xcode-select --install`).
+### Готовая сборка (Xcode не нужен)
+
+1. Скачайте **`Clean-SSD-1.0.dmg`** со страницы [Releases](https://github.com/Danya-vibe/Clean-SSD/releases/latest).
+2. Откройте образ и перетащите **Clean SSD** на ярлык **«Программы»**.
+3. Извлеките образ.
+
+Сборка универсальная: работает на Mac с Apple Silicon (M1–M4) и на Intel, нужна macOS 13 Ventura или новее.
+
+#### Первый запуск
+
+Приложение не подписано платным сертификатом Apple Developer, поэтому при первом запуске macOS его заблокирует. Разблокировать нужно один раз.
+
+**macOS 15 Sequoia и новее:**
+1. Откройте Clean SSD из «Программ». Появится окно «Не удалось открыть» — нажмите «Готово».
+2. Откройте **«Системные настройки → Конфиденциальность и безопасность»**.
+3. Внизу, рядом с сообщением о Clean SSD, нажмите **«Всё равно открыть»**.
+4. Подтвердите паролем или Touch ID и нажмите **«Открыть»**.
+
+**macOS 13–14:** нажмите на Clean SSD правой кнопкой → **«Открыть»** → **«Открыть»**.
+
+Если не помогает, выполните в Терминале:
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Clean SSD.app"
+```
+
+Целостность скачанного файла можно проверить по контрольной сумме из файла `.sha256` на странице релиза:
+
+```bash
+shasum -a 256 ~/Downloads/Clean-SSD-1.0.dmg
+```
+
+### Сборка из исходников
+
+Нужен Xcode или Command Line Tools (`xcode-select --install`).
 
 ```bash
 git clone https://github.com/Danya-vibe/Clean-SSD.git
@@ -34,9 +68,11 @@ cd Clean-SSD
 ./scripts/build_app.sh
 ```
 
-Скрипт соберёт release-версию, нарисует иконку и создаст `build/Clean SSD.app`. Перетащите его в «Программы» и запустите.
+Приложение появится в `build/Clean SSD.app`. Чтобы собрать такой же DMG, как в релизе (универсальный, с ярлыком «Программы» и инструкцией внутри):
 
-Приложение подписано ad-hoc (без сертификата Apple Developer). Если macOS не даёт его открыть, нажмите на нём правой кнопкой → «Открыть».
+```bash
+./scripts/make_dmg.sh
+```
 
 ## Первый запуск и полный доступ к диску
 
@@ -186,7 +222,9 @@ Sources/CleanSSD/
 ├── Analyzer/                  Раздел «Анализ диска»: модель, круговая диаграмма, экран
 └── UI/Components.swift        Общие элементы интерфейса
 Resources/Info.plist           Описание приложения
-scripts/build_app.sh           Сборка .app
+scripts/build_app.sh           Сборка .app (--universal — для Apple Silicon и Intel)
+scripts/make_dmg.sh            Сборка образа .dmg для раздачи
+scripts/dmg_readme.txt         Инструкция, которая кладётся внутрь .dmg
 scripts/make_icon.swift        Генерация иконки
 ```
 

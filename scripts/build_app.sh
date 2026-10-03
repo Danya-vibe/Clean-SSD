@@ -3,8 +3,13 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-swift build -c release
-BIN="$(swift build -c release --show-bin-path)/CleanSSD"
+# --universal — один бинарник для Apple Silicon и Intel (для раздачи другим людям).
+ARCH_FLAGS=()
+if [[ "${1:-}" == "--universal" ]]; then
+  ARCH_FLAGS=(--arch arm64 --arch x86_64)
+fi
+swift build -c release ${ARCH_FLAGS[@]+"${ARCH_FLAGS[@]}"}
+BIN="$(swift build -c release ${ARCH_FLAGS[@]+"${ARCH_FLAGS[@]}"} --show-bin-path)/CleanSSD"
 
 APP="build/Clean SSD.app"
 rm -rf "$APP"
